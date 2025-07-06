@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load tz %}
+
+{% block title %}Entry Details - Entry Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Entry Details</h4>
+                    <div>
+                        <a href="{% url 'entry_edit' entry.pk %}" class="btn btn-primary">Edit Entry</a>
+                        {% if entry.status == 'active' %}
+                        <a href="{% url 'calculate_interest' entry.pk %}" class="btn btn-info">Calculate Interest</a>
+                        <a href="{% url 'release_entry' entry.pk %}" class="btn btn-warning">Release Entry</a>
+                        {% endif %}
+                        <a href="{% url 'entry_list' %}" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Basic Information</h5>
+                            <table class="table">
+                                <tr>
+                                    <th>Serial Number:</th>
+                                    <td>{{ entry.serial_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Customer Name:</th>
+                                    <td>{{ entry.customer_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Date:</th>
+                                    <td>{{ entry.date }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Amount:</th>
+                                    <td>₹{{ entry.amount }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Weight:</th>
+                                    <td>{{ entry.weight }}g</td>
+                                </tr>
+                                <tr>
+                                    <th>Status:</th>
+                                    <td>{{ entry.status|title }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Interest Information</h5>
+                            <table class="table">
+                                <tr>
+                                    <th>Interest Rate:</th>
+                                    <td>{{ entry.interest_rate }}%</td>
+                                </tr>
+                                <tr>
+                                    <th>Interest Amount:</th>
+                                    <td>₹{{ entry.interest_amount }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Total Amount:</th>
+                                    <td>₹{{ entry.amount|add:entry.interest_amount }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Created At:</th>
+                                    <td>{% timezone "Asia/Kolkata" %}{{ entry.created_at|date:"Y-m-d H:i:s" }}{% endtimezone %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Updated At:</th>
+                                    <td>{% timezone "Asia/Kolkata" %}{{ entry.updated_at|date:"Y-m-d H:i:s" }}{% endtimezone %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Created By:</th>
+                                    <td>{{ entry.user.username }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

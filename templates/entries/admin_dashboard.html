@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load tz %}
+
+{% block title %}Admin Dashboard - Entry Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Statistics</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Entries</h5>
+                                    <p class="card-text h3">{{ total_entries }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">Active Entries</h5>
+                                    <p class="card-text h3">{{ active_entries }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">Released Entries</h5>
+                                    <p class="card-text h3">{{ released_entries }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Principal</h5>
+                                    <p class="card-text h3">₹{{ total_principal }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Filter Entries</h4>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        {{ form|crispy }}
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Clear Filters</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">All Entries</h4>
+                    <div>
+                        <a href="{% url 'export_to_excel' %}" class="btn btn-success me-2">
+                            <i class="fas fa-file-excel"></i> Export to Excel
+                        </a>
+                        <form class="d-inline" method="get">
+                            <input type="search" name="search" class="form-control d-inline-block" style="width: 200px;" placeholder="Search entries..." value="{{ search_query }}">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>User</th>
+                                    <th>Serial Number</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Weight</th>
+                                    <th>Status</th>
+                                    <th>Interest Rate</th>
+                                    <th>Interest Amount</th>
+                                    <th>Total Amount</th>
+                                    <th>Created At</th>
+                                    <th>Updated At</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in entries %}
+                                <tr>
+                                    <td>{{ entry.date }}</td>
+                                    <td>{{ entry.user.username }}</td>
+                                    <td>{{ entry.serial_number }}</td>
+                                    <td>{{ entry.customer_name }}</td>
+                                    <td>₹{{ entry.amount }}</td>
+                                    <td>{{ entry.weight }}g</td>
+                                    <td>{{ entry.status }}</td>
+                                    <td>{{ entry.interest_rate }}%</td>
+                                    <td>₹{{ entry.interest_amount }}</td>
+                                    <td>₹{{ entry.amount|add:entry.interest_amount }}</td>
+                                    <td>{% timezone "Asia/Kolkata" %}{{ entry.created_at|date:"Y-m-d H:i:s" }}{% endtimezone %}</td>
+                                    <td>{% timezone "Asia/Kolkata" %}{{ entry.updated_at|date:"Y-m-d H:i:s" }}{% endtimezone %}</td>
+                                    <td>
+                                        <a href="{% url 'entry_edit' entry.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                                        {% if entry.status == 'active' %}
+                                        <a href="{% url 'calculate_interest' entry.pk %}" class="btn btn-sm btn-info">Calculate Interest</a>
+                                        <a href="{% url 'release_entry' entry.pk %}" class="btn btn-sm btn-warning">Release</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="13" class="text-center">No entries found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Recent Activity</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in recent_activity %}
+                                <tr>
+                                    <td>{% timezone "Asia/Kolkata" %}{{ log.timestamp|date:"Y-m-d H:i:s" }}{% endtimezone %}</td>
+                                    <td>{{ log.user.username }}</td>
+                                    <td>{{ log.action }}</td>
+                                    <td>{{ log.details }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No recent activity.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

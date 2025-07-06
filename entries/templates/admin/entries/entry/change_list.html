@@ -1,0 +1,31 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="module" style="margin-bottom: 20px; padding: 15px; background: #fff; border: 1px solid #ccc; border-radius: 4px;">
+        <h2 style="margin-top: 0;">Entry Statistics</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+            <div style="padding: 15px; background: #f8f9fa; border-radius: 4px;">
+                <h3 style="margin: 0 0 10px 0; color: #666;">Total Entries</h3>
+                <p style="margin: 0; font-size: 24px; font-weight: bold; color: #333;">{{ total_entries }}</p>
+            </div>
+            <div style="padding: 15px; background: #f8f9fa; border-radius: 4px;">
+                <h3 style="margin: 0 0 10px 0; color: #666;">Active Entries</h3>
+                <p style="margin: 0; font-size: 24px; font-weight: bold; color: #28a745;">{{ active_entries }}</p>
+            </div>
+            <div style="padding: 15px; background: #f8f9fa; border-radius: 4px;">
+                <h3 style="margin: 0 0 10px 0; color: #666;">Released Entries</h3>
+                <p style="margin: 0; font-size: 24px; font-weight: bold; color: #007bff;">{{ released_entries }}</p>
+            </div>
+            <div style="padding: 15px; background: #f8f9fa; border-radius: 4px;">
+                <h3 style="margin: 0 0 10px 0; color: #666;">Total Principal</h3>
+                <p style="margin: 0; font-size: 24px; font-weight: bold; color: #dc3545;">₹{{ total_principal|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+    {{ block.super }}
+{% endblock %} 

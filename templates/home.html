@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Entry Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <h1 class="display-4 mb-4">Welcome to Entry Management System</h1>
+        
+        {% if user.is_authenticated %}
+            {% if user.is_approved %}
+                <div class="row mt-5">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">Create New Entry</h5>
+                                <p class="card-text">Add a new entry with details like date, amount, and customer information.</p>
+                                <a href="{% url 'entry_create' %}" class="btn btn-primary">Create Entry</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">View My Entries</h5>
+                                <p class="card-text">View and manage your existing entries.</p>
+                                <a href="{% url 'entry_list' %}" class="btn btn-primary">View Entries</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-warning">
+                    Your account is pending approval. Please wait for an administrator to approve your account.
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">New User?</h5>
+                            <p class="card-text">Register for a new account to start managing entries.</p>
+                            <a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Existing User?</h5>
+                            <p class="card-text">Login to access your account and manage entries.</p>
+                            <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

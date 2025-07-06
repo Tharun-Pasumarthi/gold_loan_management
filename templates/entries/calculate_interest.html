@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Calculate Interest - Entry Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Calculate Interest</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Entry Details</h5>
+                        <p><strong>Serial Number:</strong> {{ entry.serial_number }}</p>
+                        <p><strong>Customer:</strong> {{ entry.customer_name }}</p>
+                        <p><strong>Amount:</strong> ₹{{ entry.amount }}</p>
+                        <p><strong>From Date:</strong> {{ entry.from_date }}</p>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Select Interest Rate:</label>
+                            {% for radio in form.rate_type %}
+                            <div class="form-check">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                    {{ radio.choice_label }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div id="custom-rate" class="mb-3" style="display: none;">
+                            {{ form.daily_rate|as_crispy_field }}
+                        </div>
+                        
+                        {{ form.to_date|as_crispy_field }}
+                        
+                        <button type="submit" class="btn btn-primary">Calculate Interest</button>
+                    </form>
+
+                    {% if calculation_result %}
+                    <div class="mt-4">
+                        <h5>Calculation Results</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Interest Type</th>
+                                    <td>{{ calculation_result.interest_type }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Daily Rate</th>
+                                    <td>{{ calculation_result.daily_rate }}%</td>
+                                </tr>
+                                <tr>
+                                    <th>Number of Days</th>
+                                    <td>{{ calculation_result.days }} days</td>
+                                </tr>
+                                <tr>
+                                    <th>Interest Amount</th>
+                                    <td>₹{{ calculation_result.interest_amount }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Total Amount</th>
+                                    <td>₹{{ calculation_result.total_amount }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const rateTypeRadios = document.querySelectorAll('input[name="rate_type"]');
+    const customRateDiv = document.getElementById('custom-rate');
+    
+    function toggleCustomRate() {
+        const selectedRate = document.querySelector('input[name="rate_type"]:checked').value;
+        customRateDiv.style.display = selectedRate === 'custom' ? 'block' : 'none';
+    }
+    
+    rateTypeRadios.forEach(radio => {
+        radio.addEventListener('change', toggleCustomRate);
+    });
+    
+    // Initial state
+    toggleCustomRate();
+});
+</script>
+{% endblock %} 
