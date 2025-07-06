@@ -1,0 +1,16 @@
+# Django
+*.pyc
+__pycache__/
+db.sqlite3
+
+# Env
+.env
+venv/
+ENV/
+
+# VSCode or PyCharm
+.vscode/
+.idea/
+
+# Migrations (optional)
+**/migrations/
