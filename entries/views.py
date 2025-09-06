@@ -137,7 +137,17 @@ def release_entry(request, pk):
 def admin_dashboard(request):
     form = EntryFilterForm(request.GET)
     entries = Entry.objects.all()
-    
+
+    # Stats should always reflect all entries, not filtered
+    stats = {
+        'total_entries': Entry.objects.count(),
+        'active_entries': Entry.objects.filter(status='active').count(),
+        'released_entries': Entry.objects.filter(status='released').count(),
+        'total_principal': Entry.objects.aggregate(Sum('amount'))['amount__sum'] or 0,
+        'total_interest': Entry.objects.aggregate(Sum('interest_amount'))['interest_amount__sum'] or 0,
+    }
+
+    # Only filter for table display
     if form.is_valid():
         if form.cleaned_data['status']:
             entries = entries.filter(status=form.cleaned_data['status'])
@@ -147,21 +157,17 @@ def admin_dashboard(request):
             entries = entries.filter(date__lte=form.cleaned_data['date_to'])
         if form.cleaned_data['customer_name']:
             entries = entries.filter(customer_name__icontains=form.cleaned_data['customer_name'])
-    
-    stats = {
-        'total_entries': entries.count(),
-        'active_entries': entries.filter(status='active').count(),
-        'released_entries': entries.filter(status='released').count(),
-        'total_principal': entries.aggregate(Sum('amount'))['amount__sum'] or 0,
-        'total_interest': entries.aggregate(Sum('interest_amount'))['interest_amount__sum'] or 0,
-    }
-    
+
     audit_logs = AuditLog.objects.all().order_by('-timestamp')[:50]
-    
+
     return render(request, 'entries/admin_dashboard.html', {
         'entries': entries,
-        'stats': stats,
-        'audit_logs': audit_logs,
+        'total_entries': stats['total_entries'],
+        'active_entries': stats['active_entries'],
+        'released_entries': stats['released_entries'],
+        'total_principal': stats['total_principal'],
+        'total_interest': stats['total_interest'],
+        'recent_activity': audit_logs,
         'form': form
     })
 

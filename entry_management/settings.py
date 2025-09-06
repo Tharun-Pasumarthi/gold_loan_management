@@ -99,7 +99,7 @@ WSGI_APPLICATION = 'entry_management.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:postgres@localhost:5432/mysite',
+        default='postgresql://postgres:Tharun@2006@localhost:5432/gold_management',
         conn_max_age=600
     )
 }
@@ -160,3 +160,28 @@ LOGIN_URL = 'login'
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.CustomUser'
+
+# PostgreSQL settings
+POSTGRESQL_SETTINGS = {
+    'USER': 'postgres',
+    'PASSWORD': 'Tharun@2006',
+    'HOST': 'localhost',
+    'PORT': '5432',
+    'NAME': 'gold_management',
+}
+
+# Database connection
+DATABASES['default'] = {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': POSTGRESQL_SETTINGS['NAME'],
+    'USER': POSTGRESQL_SETTINGS['USER'],
+    'PASSWORD': POSTGRESQL_SETTINGS['PASSWORD'],
+    'HOST': POSTGRESQL_SETTINGS['HOST'],
+    'PORT': POSTGRESQL_SETTINGS['PORT'],
+}
+
+import sys
+from django.core.management import execute_from_command_line
+
+if __name__ == "__main__":
+    execute_from_command_line(sys.argv)

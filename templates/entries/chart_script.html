@@ -1,0 +1,42 @@
+// Chart.js CDN
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('statsChart').getContext('2d');
+    const statsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Total Entries', 'Active Entries', 'Released Entries', 'Total Principal'],
+            datasets: [{
+                label: 'Statistics',
+                data: [
+                    {{ total_entries }},
+                    {{ active_entries }},
+                    {{ released_entries }},
+                    {{ total_principal }}
+                ],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(40, 167, 69, 0.7)',
+                    'rgba(23, 162, 184, 0.7)',
+                    'rgba(255, 193, 7, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(40, 167, 69, 1)',
+                    'rgba(23, 162, 184, 1)',
+                    'rgba(255, 193, 7, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+});
+</script>
